@@ -1,31 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using System.IO;
 
-public class IngestionMenu : MonoBehaviour
+namespace Editor
 {
-    [MenuItem("Ingestion/Sounds/Ingest All Sounds")]
-    static void IngestSounds()
+    public class IngestionMenu : MonoBehaviour
     {
-        IngestMusicTrack();
-    }
+        [MenuItem("Ingestion/Sounds/Ingest All Sounds")]
+        static void IngestSounds()
+        {
+            IngestMusicTrack();
+        }
 
-    [MenuItem("Ingestion/Sounds/Ingest Music")]
-    static void IngestMusicTrack()
-    {
-        AudioClip musicLoaded = Resources.Load<AudioClip>("GameJamRaw/Sounds/music");
-        if (musicLoaded != null)
+        [MenuItem("Ingestion/Sounds/Ingest Music")]
+        static void IngestMusicTrack()
         {
-            GameObject.Find("GameController").GetComponent<AudioSource>().clip = musicLoaded;
+            AudioClip musicLoaded = Resources.Load<AudioClip>("GameJamRaw/Sounds/music");
+            if (musicLoaded != null)
+            {
+                GameObject.Find("GameController").GetComponent<AudioSource>().clip = musicLoaded;
+            }
+            else
+            {
+                logIngestionFailure("Music");
+            }
         }
-        else
+        [MenuItem("Ingestion/Environment Art/Ingest Far Background")]
+        static void IngestFarBackgroundSprite()
         {
-            Debug.LogWarning("Loaded null music track from jam assets; leaving default music enabled");
+            Sprite imageLoaded = Resources.Load<Sprite>("GameJamRaw/Images/farbackground");
+            if (imageLoaded != null)
+            {
+            
+            }
+            else
+            {
+                logIngestionFailure("Far Background");
+            }
         }
-    }
-    /*
+
+        private static void logIngestionFailure(string assetDescription)
+        {
+            Debug.LogWarning($"Loaded null {assetDescription} image from jam assets; leaving default {assetDescription} enabled");
+        }
+
+        /*
     private static void ReverseClip()
     {
         string directoryPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
@@ -90,4 +108,5 @@ public class IngestionMenu : MonoBehaviour
     }
     //for reference only
     */
+    }
 }
