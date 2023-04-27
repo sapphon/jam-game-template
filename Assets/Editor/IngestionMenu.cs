@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using GameJamIngestion;
 using Platformer.Mechanics;
 using UnityEditor;
@@ -47,7 +49,31 @@ namespace Editor
                 logIngestionFailure("Player capabilities");
             }
         }
+        
+        [MenuItem("Ingestion/Character Art/Ingest Player Move Art")]
+        static void IngestPlayerMoveAnim()
+        {
+            List<Sprite> movementSpritesLoaded = Resources.LoadAll<Sprite>("GameJamRaw/Images/Player/Move").ToList();
+            if (movementSpritesLoaded != null && movementSpritesLoaded.Count > 0)
+            {
+                ApplyPlayerMovementAnimation(movementSpritesLoaded);
+            }
+            else
+            {
+                logIngestionFailure("Player movement animation");
+            }
+        }
 
+        private static void ApplyPlayerMovementAnimation(List<Sprite> movementSpritesLoaded)
+        {
+            AnimationClip playerRunAnim = GetPlayerRunAnim();
+        }
+
+        private static AnimationClip GetPlayerRunAnim()
+        {
+            return AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Character/Animations/PlayerRun.anim");
+        }
+        
         private static void ApplyPlayerCapabilities(PlayerCapabilities capabilities)
         {
             PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>();
