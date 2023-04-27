@@ -1,0 +1,6 @@
+{
+	"movementSpeed": 3,
+	"gravityMultiplier": 1,
+	"jumpHeight": 7,
+	"hitPoints": 2
+}

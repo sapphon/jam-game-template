@@ -1,3 +1,5 @@
+using GameJamIngestion;
+using Platformer.Mechanics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -25,6 +27,36 @@ namespace Editor
                 logIngestionFailure("Music");
             }
         }
+        
+        [MenuItem("Ingestion/Gameplay/Ingest All Gameplay Data")]
+        static void IngestGameplayData()
+        {
+            IngestPlayerData();
+        }
+
+        [MenuItem("Ingestion/Gameplay/Ingest Player Capabilities")]
+        static void IngestPlayerData()
+        {
+            TextAsset textLoaded = Resources.Load<TextAsset>("GameJamRaw/Gameplay/playerstats");
+            if (textLoaded != null)
+            {
+                ApplyPlayerCapabilities(PlayerCapabilities.CreateFromJson(textLoaded.text));
+            }
+            else
+            {
+                logIngestionFailure("Player capabilities");
+            }
+        }
+
+        private static void ApplyPlayerCapabilities(PlayerCapabilities capabilities)
+        {
+            PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>();
+            player.maxSpeed = capabilities.movementSpeed;
+            player.jumpTakeOffSpeed = capabilities.jumpHeight;
+            player.gravityModifier = capabilities.gravityMultiplier;
+            player.GetComponent<Health>().maxHP = capabilities.hitPoints;
+        }
+
         [MenuItem("Ingestion/Environment Art/Ingest Far Background")]
         static void IngestFarBackgroundSprite()
         {
