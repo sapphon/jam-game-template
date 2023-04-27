@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Editor
 {
@@ -30,7 +31,7 @@ namespace Editor
             Sprite imageLoaded = Resources.Load<Sprite>("GameJamRaw/Images/farbackground");
             if (imageLoaded != null)
             {
-            
+                Debug.Log("Warning: Far Background ingestion not yet implemented");
             }
             else
             {
