@@ -12,9 +12,10 @@ public class IngestionMenu : MonoBehaviour
         IngestMusicTrack();
     }
 
+    [MenuItem("Ingestion/Sounds/Ingest Music")]
     static void IngestMusicTrack()
     {
-        AudioClip musicLoaded = Resources.Load<AudioClip>("Sounds/music");
+        AudioClip musicLoaded = Resources.Load<AudioClip>("GameJamRaw/Sounds/music");
         if (musicLoaded != null)
         {
             GameObject.Find("GameController").GetComponent<AudioSource>().clip = musicLoaded;
