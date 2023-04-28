@@ -56,7 +56,6 @@ namespace Editor
         [MenuItem("Ingestion/Gameplay/Ingest Dialogue")]
         static void IngestDialogue()
         {
-            DialogueData.printExample();
             List<DialogueData> dataLoaded = Resources.LoadAll<TextAsset>("GameJamRaw/Gameplay/Dialogue/").Select(json => DialogueData.CreateFromJson(json.text)).ToList();
             if (dataLoaded != null && dataLoaded.Count > 0)
             {
