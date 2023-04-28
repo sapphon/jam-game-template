@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameJamIngestion;
+using NUnit.Framework;
 using Platformer.Mechanics;
 using UnityEditor;
 using UnityEngine;
@@ -56,7 +57,7 @@ namespace Editor
             List<Sprite> movementSpritesLoaded = Resources.LoadAll<Sprite>("GameJamRaw/Images/Player/Move").ToList();
             if (movementSpritesLoaded != null && movementSpritesLoaded.Count > 0)
             {
-                ApplyPlayerMovementAnimation(movementSpritesLoaded);
+                OverridePlayerMovementAnimation(movementSpritesLoaded);
             }
             else
             {
@@ -64,14 +65,21 @@ namespace Editor
             }
         }
 
-        private static void ApplyPlayerMovementAnimation(List<Sprite> movementSpritesLoaded)
+        private static void OverridePlayerMovementAnimation(List<Sprite> movementSpritesLoaded)
         {
-            AnimationClip playerRunAnim = GetPlayerRunAnim();
+            Animator playerAnimator = GetPlayerAnimator();
+            AnimatorOverrideController movementOverride =
+                new AnimatorOverrideController(playerAnimator.runtimeAnimatorController);
+            List<KeyValuePair<AnimationClip, AnimationClip>> overrides =
+                new List<KeyValuePair<AnimationClip, AnimationClip>>();
+            overrides.Add(playerAnimator.);
+            movementOverride.ApplyOverrides(overrides);
+            playerAnimator.runtimeAnimatorController = movementOverride;
         }
 
-        private static AnimationClip GetPlayerRunAnim()
+        private static Animator GetPlayerAnimator()
         {
-            return AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Character/Animations/PlayerRun.anim");
+            return GameObject.Find("Player").GetComponent<Animator>();
         }
         
         private static void ApplyPlayerCapabilities(PlayerCapabilities capabilities)
