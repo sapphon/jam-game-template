@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameJamIngestion;
+using GameJamIngestion.Resources.GameJamIngestion;
 using Platformer.Mechanics;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,7 +13,7 @@ namespace Editor
     public class IngestionMenu : MonoBehaviour
     {
         [MenuItem("Ingestion/Sounds/Ingest All Sounds")]
-        static void IngestSounds()
+        static void IngestAllSounds()
         {
             IngestMusicTrack();
         }
@@ -34,6 +36,7 @@ namespace Editor
         static void IngestGameplayData()
         {
             IngestPlayerData();
+            IngestDialogue();
         }
 
         [MenuItem("Ingestion/Gameplay/Ingest Player Capabilities")]
@@ -50,6 +53,38 @@ namespace Editor
             }
         }
         
+        [MenuItem("Ingestion/Gameplay/Ingest Dialogue")]
+        static void IngestDialogue()
+        {
+            DialogueData.printExample();
+            List<DialogueData> dataLoaded = Resources.LoadAll<TextAsset>("GameJamRaw/Gameplay/Dialogue/").Select(json => DialogueData.CreateFromJson(json.text)).ToList();
+            if (dataLoaded != null && dataLoaded.Count > 0)
+            {
+                dataLoaded.ForEach(dialogueData => { createDialogueNodeFromData(dialogueData); });
+            }
+            else
+            {
+                logIngestionFailure("Dialogue");
+            }
+        }
+
+        private static void createDialogueNodeFromData(DialogueData dialogueData)
+        {
+            GameObject instantiated = Instantiate(Resources.Load("GameJamIngestion/Prefabs/DialogueNode")) as GameObject;
+            DialogueNode dialogue = instantiated.GetComponent<DialogueNode>();
+            dialogue.transform.position = dialogueData.position;
+            if (dialogue.textComponent == null)
+            {
+                dialogue.textComponent = dialogue.GetComponentInChildren<TextMeshPro>();
+            }
+
+            dialogue.textComponent.text = dialogueData.dialogue;
+            dialogue.textComponent.color = new Color(dialogue.textComponent.color.r,
+                dialogue.textComponent.color.g, dialogue.textComponent.color.b, 0);
+            dialogue.timeToDisplay = dialogueData.timeToDisplay;
+            dialogue.timeTriggered = float.NegativeInfinity;
+        }
+
         [MenuItem("Ingestion/Character Art/Ingest Player Move Art")]
         static void IngestPlayerMoveAnim()
         {
