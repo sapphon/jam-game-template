@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Platformer.Mechanics;
+using TMPro;
 using UnityEngine;
 
 public class GameJamConfigurer : MonoBehaviour
@@ -20,6 +21,18 @@ public class GameJamConfigurer : MonoBehaviour
         }
     }
     
+    public struct PlotBeatConfigData
+    {
+        public float x;
+        public float y;
+        public string text;
+        
+        public static PlotBeatConfigData CreateFromJson(string json)
+        {
+            return JsonUtility.FromJson<PlotBeatConfigData>(json);
+        }
+    }
+    
     private GameObject playerObject;
     private GameObject enemiesObject;
     private AnimationController[] enemyControllers;
@@ -33,6 +46,8 @@ public class GameJamConfigurer : MonoBehaviour
     public bool playerCanBop = true;
     public bool enemiesEnabled = true;
     public bool tokensEnabled = true;
+    private GameObject plotBeatsObject;
+    private PlotBeat[] plotBeats;
 
     void Start()
     {
@@ -41,9 +56,12 @@ public class GameJamConfigurer : MonoBehaviour
         this.enemiesObject = GameObject.Find("Enemies");
         this.enemyControllers = enemiesObject.GetComponentsInChildren<AnimationController>();
         this.tokensObject = GameObject.Find("Tokens");
+        this.plotBeatsObject = GameObject.Find("PlotBeats");
+        this.plotBeats = plotBeatsObject.GetComponentsInChildren<PlotBeat>();
         this.tokens = tokensObject.GetComponentsInChildren<SpriteRenderer>();
 
         readFromConfigFile();
+        configurePlotBeats();
         
         setPlayerSpeed();
         setPlayerJump();
@@ -57,6 +75,22 @@ public class GameJamConfigurer : MonoBehaviour
         {
             disableTokens();
         }
+    }
+
+    private void configurePlotBeats()
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            PlotBeatConfigData data = readFromPlotBeatsFile(i + 1);
+            plotBeats[i].transform.position = new Vector3(data.x, data.y, 0);
+            plotBeats[i].text.GetComponent<TextMeshProUGUI>().text = data.text;
+        }
+    }
+
+    private PlotBeatConfigData readFromPlotBeatsFile(int fileNumber)
+    {
+        string json = Resources.Load<TextAsset>("plot" + fileNumber.ToString()).text;
+        return PlotBeatConfigData.CreateFromJson(json);
     }
 
     private void readFromConfigFile()
