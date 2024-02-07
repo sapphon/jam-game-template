@@ -5,6 +5,21 @@ using UnityEngine;
 
 public class GameJamConfigurer : MonoBehaviour
 {
+    public struct GameplayConfigData
+    {
+        public float playerSpeedMultiplier;
+        public float playerJumpMultiplier;
+        public float enemySpeedMultiplier;
+        public bool playerCanBop;
+        public bool enemiesEnabled;
+        public bool tokensEnabled;
+        
+        public static GameplayConfigData CreateFromJson(string json)
+        {
+            return JsonUtility.FromJson<GameplayConfigData>(json);
+        }
+    }
+    
     private GameObject playerObject;
     private GameObject enemiesObject;
     private AnimationController[] enemyControllers;
@@ -28,6 +43,8 @@ public class GameJamConfigurer : MonoBehaviour
         this.tokensObject = GameObject.Find("Tokens");
         this.tokens = tokensObject.GetComponentsInChildren<SpriteRenderer>();
 
+        readFromConfigFile();
+        
         setPlayerSpeed();
         setPlayerJump();
         setEnemySpeeds();
@@ -40,6 +57,18 @@ public class GameJamConfigurer : MonoBehaviour
         {
             disableTokens();
         }
+    }
+
+    private void readFromConfigFile()
+    {
+        string json = Resources.Load<TextAsset>("config").text;
+        GameplayConfigData data = GameplayConfigData.CreateFromJson(json);
+        playerSpeedMultiplier = data.playerSpeedMultiplier;
+        playerJumpMultiplier = data.playerJumpMultiplier;
+        enemySpeedMultiplier = data.enemySpeedMultiplier;
+        playerCanBop = data.playerCanBop;
+        enemiesEnabled = data.enemiesEnabled;
+        tokensEnabled = data.tokensEnabled;
     }
 
     private void disableTokens()
